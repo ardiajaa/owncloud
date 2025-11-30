@@ -1,4 +1,4 @@
-# ownCloud Auto Installer for Debian 12
+# OwnCloud Auto Installer for Debian 12
 
 Script bash otomatis untuk instalasi **ownCloud** di Debian 12. Simple dan mudah digunakan!
 
@@ -6,33 +6,30 @@ Script bash otomatis untuk instalasi **ownCloud** di Debian 12. Simple dan mudah
 
 ## Cara Kerja
 
-1. **Clone repository ini:**
+1. **Pastikan Anda sudah masuk sebagai user root.**
+
+2. **Install Git terlebih dahulu (jika belum terpasang):**
+   ```bash
+   apt install git -y
+   ```
+
+3. **Clone repository ini:**
    ```bash
    git clone https://github.com/ardiajaa/owncloud.git
    cd owncloud
    ```
 
-2. **Jalankan script-nya:**
+4. **Jalankan script-nya:**
    ```bash
    chmod +x owncloud.sh
-   sudo ./owncloud.sh
+   ./owncloud.sh
    ```
 
-3. **Ikuti instruksi pada layar.**
+5. **Ikuti instruksi pada layar.**
    - Masukkan IP server, domain, dan detail database sesuai prompt.
    - Script akan otomatis menginstall PHP 7.4, Apache2, MariaDB, dan OwnCloud lengkap beserta konfigurasinya.
 
-4. **Akses ownCloud Anda via browser**
-   - http://<domain-anda> atau http://<ip-server>
+6. **Akses ownCloud Anda via browser menggunakan IP Server**
 
----
-
-## 👨‍💻 Author
-
-Ardi Ajaa  
-GitHub: [@ardiajaa](https://github.com/ardiajaa/)
-
----
-
-**Repository:** https://github.com/ardiajaa/owncloud
-
+## Powered by Ardi Ajaa  
+GitHub: [https://github.com/ardiajaa](https://github.com/ardiajaa)
