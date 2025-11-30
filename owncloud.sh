@@ -1,338 +1,358 @@
-#!/bin/bash    
+#!/bin/bash
 
-showMe(){
- echo "@@@@@@@@@@@@@@@@@@@@@@B?!JJ55#@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@G!^~J!?#@@@@@@@@@@@@@@@@@@@
-@@@@@@@&#BBBBBB#&@@@5!7?777J@@@#BBB#BB##&@@@@@@@
-@@@@&#BGGGBBPPPGG&@#7?!77!77#@GBPPPBBBGGBB&@@@@@
-@&&#BGGGGGBBPPPBB&@YJ??J?J??G@BBGPPBBBGGGGB##&@@
-@@#BBGGGGGGBGGG#B&#GGGGGGGGGG&##GGGBGGGGGGBB#@@@
-@##BGGGGGGGGBBBB#&B55PPPPPP5G&#BBBBBGGGGGGGB##@@
-@@&BGGGGGGGGBBBBBPYPB@@@@@#PYPBBBBBGGGGGGGGB#@@@
-@@#BBGGGGGGGGG#BY5PPB@@@@@#PG5YB#BPGGGGGGGBB#@@@
-@@&&BBGGGGGGGGGGYGPPB@&P#@#PPG55GGPGGGGGGGB##@@@
-@@@&BBGGGGGBGBGBYGPPB@@#&@#PPG5PBBGBGGGGGGB&@@@@
-@@@&#BBGGBGBBBB@YPPPB@@&@@#PPGY&#BBBBBGGGG##@@@@
-@@@@#BBBBBBB##@@GYGPB@&P#@#PG5P@@##BBBBBBBB@@@@@
-@@@&BBBBBB#&@&##&G5PB@@@@@#P5P&&##@&#B#BBBB&@@@@
-@@@#BB#B##@@@#5PB&B5P&@@@&GYG&#PPG@@@&#B#B#B@@@@
-@@#BB###@@@@@@BPPPGBG5PGP5PBBPPPG@@@@@@&B#B##@@@
-@&####&@@@@&BPY5PP5PPBGPGGPP5PP5J5B&@@@@&#####@@
-&###@@@@@@@&GJYJY555PYB?G55PP55JYY5#@@@@@@@&##&@
-#&@@@@@@@@@@@@BGYJ5J5P5?YP5YYYJGB&@@@@@@@@@@@@#&
-@@@@@@@@@@@@@@@@&@BG#BGBGG#GG&&@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-"
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
+CYAN='\033[0;36m'
+WHITE='\033[1;37m'
+NC='\033[0m' # No Color
+BOLD='\033[1m'
+
+# Unicode symbols
+CHECK="✓"
+CROSS="✗"
+ARROW="➜"
+STAR="★"
+GEAR="⚙"
+
+clear
+
+# Banner function
+show_banner() {
+    echo -e "${CYAN}"
+    cat << "EOF"
+    ╔═══════════════════════════════════════════════════════════════╗
+    ║                                                               ║
+    ║     ██████╗ ██╗    ██╗███╗   ██╗ ██████╗██╗      ██████╗      ║
+    ║    ██╔═══██╗██║    ██║████╗  ██║██╔════╝██║     ██╔═══██╗     ║
+    ║    ██║   ██║██║ █╗ ██║██╔██╗ ██║██║     ██║     ██║   ██║     ║
+    ║    ██║   ██║██║███╗██║██║╚██╗██║██║     ██║     ██║   ██║     ║
+    ║    ╚██████╔╝╚███╔███╔╝██║ ╚████║╚██████╗███████╗╚██████╔╝     ║
+    ║     ╚═════╝  ╚══╝╚══╝ ╚═╝  ╚═══╝ ╚═════╝╚══════╝ ╚═════╝      ║
+    ║                                                               ║
+    ║              AUTO INSTALLER FOR DEBIAN 12                     ║
+    ║                   Powered by Ardi Aja                         ║
+    ║                                                               ║
+    ╚═══════════════════════════════════════════════════════════════╝
+EOF
+    echo -e "${NC}"
+    echo -e "${YELLOW}                    ${STAR} Powered by: ${BOLD}Ardi Aja${NC} ${STAR}${NC}"
+    echo -e "${MAGENTA}              GitHub: ${WHITE}https://github.com/ardiajaa/${NC}"
+    echo -e "${CYAN}    ═══════════════════════════════════════════════════════════${NC}"
+    echo ""
 }
 
-showMe    
-echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗"
-echo "║                                                            ║"
-echo "║      ownCloud + DNS Server Auto Installer Debian 12       ║"
-echo "║                    Created by Ardi Ajaa                    ║"
-echo "║                                                            ║"
-echo "╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-echo ""
-echo "$(tput setaf 2)Thanks for using this script....."
-sleep 2s
-reset
-sleep 1s
+# Progress bar function
+show_progress() {
+    local current=$1
+    local total=$2
+    local width=50
+    local percentage=$((current * 100 / total))
+    local filled=$((width * current / total))
+    local empty=$((width - filled))
+    
+    printf "\r${CYAN}["
+    printf "%${filled}s" | tr ' ' '█'
+    printf "%${empty}s" | tr ' ' '░'
+    printf "] ${WHITE}%3d%%${NC}" $percentage
+}
 
-# Input domain configuration
-echo "$(tput setaf 3)╔════════════════════════════════════════════════════════════╗"
-echo "║              DNS Configuration Setup                       ║"
-echo "╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-echo ""
-read -p "$(tput setaf 6)Enter your subdomain (e.g., peserta1): $(tput sgr0)" SUBDOMAIN
-read -p "$(tput setaf 6)Enter your domain (e.g., tkj.id): $(tput sgr0)" DOMAIN
-FULL_DOMAIN="${SUBDOMAIN}.${DOMAIN}"
-SERVER_IP=$(hostname -I | awk '{print $1}')
+# Step header function
+step_header() {
+    local step=$1
+    local total=$2
+    local title=$3
+    echo ""
+    echo -e "${BLUE}╔═══════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${BLUE}║${NC} ${GREEN}${GEAR} Step [$step/$total]${NC} ${WHITE}$title${NC}"
+    echo -e "${BLUE}╚═══════════════════════════════════════════════════════════════╝${NC}"
+}
+
+# Success message function
+success_msg() {
+    echo -e "${GREEN}${CHECK}${NC} $1"
+}
+
+# Info message function
+info_msg() {
+    echo -e "${CYAN}${ARROW}${NC} $1"
+}
+
+# Warning message function
+warn_msg() {
+    echo -e "${YELLOW}⚠${NC} $1"
+}
+
+# Error message function
+error_msg() {
+    echo -e "${RED}${CROSS}${NC} $1"
+}
+
+# Input box function
+input_box() {
+    local prompt=$1
+    local default=$2
+    echo -e "${CYAN}┌─────────────────────────────────────────────────────────────┐${NC}"
+    if [ -n "$default" ]; then
+        echo -e "${CYAN}│${NC} ${YELLOW}${prompt}${NC} ${WHITE}[default: $default]${NC}"
+    else
+        echo -e "${CYAN}│${NC} ${YELLOW}${prompt}${NC}"
+    fi
+    echo -e "${CYAN}└─────────────────────────────────────────────────────────────┘${NC}"
+    echo -ne "${GREEN}${ARROW} ${NC}"
+}
+
+# Show banner
+show_banner
+
+sleep 1
+
+# ===============================================
+# AUTO DETECT SERVER IP
+# ===============================================
+step_header 1 8 "Deteksi IP Server"
+AUTO_IP=$(hostname -I | awk '{print $1}')
 
 echo ""
-echo "$(tput setaf 2)Configuration Summary:"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "Full Domain  : $FULL_DOMAIN"
-echo "Server IP    : $SERVER_IP"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(tput sgr0)"
+info_msg "IP terdeteksi otomatis: ${WHITE}$AUTO_IP${NC}"
 echo ""
-read -p "$(tput setaf 3)Continue with this configuration? (y/n): $(tput sgr0)" CONFIRM
+input_box "Gunakan IP ini? (y/n)"
+read -p "" USEAUTO
 
-if [[ $CONFIRM != "y" && $CONFIRM != "Y" ]]; then
-    echo "$(tput setaf 1)Installation cancelled.$(tput sgr0)"
-    exit 1
+if [ "$USEAUTO" = "y" ] || [ "$USEAUTO" = "Y" ]; then
+    SERVER_IP=$AUTO_IP
+    success_msg "Menggunakan IP: ${WHITE}$SERVER_IP${NC}"
+else
+    echo ""
+    input_box "Masukkan IP server manual"
+    read -p "" SERVER_IP
+    success_msg "IP server diset: ${WHITE}$SERVER_IP${NC}"
 fi
 
+# ===============================================
+# Input Domain
+# ===============================================
+step_header 2 8 "Konfigurasi Domain"
 echo ""
-echo "$(tput setaf 3)Starting installation in 3 seconds...$(tput sgr0)"
-sleep 3s
-reset
+input_box "Masukkan domain (contoh: ardianto.my.id)"
+read -p "" DOMAIN
+success_msg "Domain: ${WHITE}$DOMAIN${NC}"
 
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 2)[Step 1/10]$(tput sgr0) Updating package lists...                  $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-apt-get update
-
+# ===============================================
+# Input Database Name
+# ===============================================
+step_header 3 8 "Konfigurasi Database"
 echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 2)[Step 2/10]$(tput sgr0) Installing Apache2, MariaDB & BIND9...      $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-apt install apache2 mariadb-server bind9 bind9utils bind9-doc dnsutils -y
+input_box "Masukkan nama database OwnCloud" "ownclouddb"
+read -p "" DBNAME
+DBNAME=${DBNAME:-ownclouddb}
+success_msg "Nama database: ${WHITE}$DBNAME${NC}"
 
+# ===============================================
+# Input MySQL root Password
+# ===============================================
 echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 2)[Step 3/10]$(tput sgr0) Installing required dependencies...         $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-apt install curl gnupg2 software-properties-common apt-transport-https lsb-release ca-certificates -y
-
+input_box "Masukkan password ROOT database"
+read -s -p "" DBPASS
 echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 2)[Step 4/10]$(tput sgr0) Configuring BIND9 DNS Server...             $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
+success_msg "Password database telah diset"
 
-# Backup original files
-cp /etc/bind/named.conf.options /etc/bind/named.conf.options.bak
-cp /etc/bind/named.conf.local /etc/bind/named.conf.local.bak
-
-# Configure named.conf.options
-cat > /etc/bind/named.conf.options << 'EOL'
-options {
-    directory "/var/cache/bind";
-    
-    recursion yes;
-    allow-recursion { any; };
-    
-    listen-on { any; };
-    listen-on-v6 { any; };
-    
-    forwarders {
-        8.8.8.8;
-        8.8.4.4;
-    };
-    
-    dnssec-validation auto;
-    
-    auth-nxdomain no;
-};
-EOL
-
-# Configure named.conf.local
-cat > /etc/bind/named.conf.local << EOL
-zone "${DOMAIN}" {
-    type master;
-    file "/etc/bind/zones/db.${DOMAIN}";
-};
-
-zone "$(echo $SERVER_IP | awk -F. '{print $3"."$2"."$1}').in-addr.arpa" {
-    type master;
-    file "/etc/bind/zones/db.$(echo $SERVER_IP | awk -F. '{print $3"."$2"."$1}')";
-};
-EOL
-
-# Create zones directory
-mkdir -p /etc/bind/zones
-
-# Create forward zone file
-cat > /etc/bind/zones/db.${DOMAIN} << EOL
-;
-; BIND data file for ${DOMAIN}
-;
-\$TTL    604800
-@       IN      SOA     ${FULL_DOMAIN}. admin.${DOMAIN}. (
-                              3         ; Serial
-                         604800         ; Refresh
-                          86400         ; Retry
-                        2419200         ; Expire
-                         604800 )       ; Negative Cache TTL
-;
-@       IN      NS      ${FULL_DOMAIN}.
-@       IN      A       ${SERVER_IP}
-${SUBDOMAIN}    IN      A       ${SERVER_IP}
-www     IN      CNAME   ${SUBDOMAIN}
-EOL
-
-# Create reverse zone file
-REVERSE_IP=$(echo $SERVER_IP | awk -F. '{print $4"."$3"."$2"."$1}')
-REVERSE_ZONE=$(echo $SERVER_IP | awk -F. '{print $3"."$2"."$1}')
-
-cat > /etc/bind/zones/db.${REVERSE_ZONE} << EOL
-;
-; BIND reverse data file
-;
-\$TTL    604800
-@       IN      SOA     ${FULL_DOMAIN}. admin.${DOMAIN}. (
-                              3         ; Serial
-                         604800         ; Refresh
-                          86400         ; Retry
-                        2419200         ; Expire
-                         604800 )       ; Negative Cache TTL
-;
-@       IN      NS      ${FULL_DOMAIN}.
-$(echo $SERVER_IP | awk -F. '{print $4}')      IN      PTR     ${FULL_DOMAIN}.
-EOL
-
-# Check BIND configuration
-named-checkconf
-named-checkzone ${DOMAIN} /etc/bind/zones/db.${DOMAIN}
-named-checkzone ${REVERSE_ZONE}.in-addr.arpa /etc/bind/zones/db.${REVERSE_ZONE}
-
-# Restart BIND9
-systemctl restart bind9
-systemctl enable bind9
-
+# ===============================================
+# Configuration Summary
+# ===============================================
 echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 2)[Step 5/10]$(tput sgr0) Adding Sury PHP repository...               $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-curl -sSL https://packages.sury.org/php/README.txt
-wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
-echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-
-apt update
-
+echo -e "${MAGENTA}╔═══════════════════════════════════════════════════════════════╗${NC}"
+echo -e "${MAGENTA}║${NC}              ${BOLD}${WHITE}RINGKASAN KONFIGURASI${NC}                         ${MAGENTA}║${NC}"
+echo -e "${MAGENTA}╠═══════════════════════════════════════════════════════════════╣${NC}"
+echo -e "${MAGENTA}║${NC} ${CYAN}Domain          :${NC} ${WHITE}$DOMAIN${NC}"
+echo -e "${MAGENTA}║${NC} ${CYAN}Server IP       :${NC} ${WHITE}$SERVER_IP${NC}"
+echo -e "${MAGENTA}║${NC} ${CYAN}Database Name   :${NC} ${WHITE}$DBNAME${NC}"
+echo -e "${MAGENTA}║${NC} ${CYAN}Database User   :${NC} ${WHITE}root${NC}"
+echo -e "${MAGENTA}║${NC} ${CYAN}Database Pass   :${NC} ${WHITE}••••••••${NC} ${GREEN}(Hidden)${NC}"
+echo -e "${MAGENTA}╚═══════════════════════════════════════════════════════════════╝${NC}"
 echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 2)[Step 6/10]$(tput sgr0) Installing PHP 7.4 and modules...           $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-apt install php7.4 libapache2-mod-php7.4 php7.4-{mysql,intl,curl,json,gd,xml,mbstring,zip,cli,common} php-pear -y
+echo -e "${YELLOW}${ARROW} Instalasi akan dimulai dalam 3 detik...${NC}"
+sleep 3
 
-php7.4 -v
-
+# ===============================================
+# Update Sistem
+# ===============================================
+step_header 4 8 "Update & Install Dependencies"
 echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 2)[Step 7/10]$(tput sgr0) Adding ownCloud repository...               $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/server:/10.9.1/Debian_12/ /' > /etc/apt/sources.list.d/isv:ownCloud:server:10.list
-curl -fsSL https://download.opensuse.org/repositories/isv:ownCloud:server:10.9.1/Debian_12/Release.key | gpg --dearmor > /etc/apt/trusted.gpg.d/isv_ownCloud_server_10.gpg
-
-apt update
-apt install owncloud-complete-files -y
-
+info_msg "Memperbarui sistem..."
+apt update > /dev/null 2>&1 &
+PID=$!
+while kill -0 $PID 2>/dev/null; do
+    show_progress 1 5
+    sleep 0.5
+done
+wait $PID
 echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 2)[Step 8/10]$(tput sgr0) Configuring Apache for ownCloud...          $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
+success_msg "Sistem berhasil diperbarui"
+
+info_msg "Menginstall dependencies..."
+apt install curl gnupg2 lsb-release ca-certificates software-properties-common -y > /dev/null 2>&1
+success_msg "Dependencies terinstall"
+
+# ===============================================
+# INSTALL PHP 7.4 DARI SURY
+# ===============================================
+step_header 5 8 "Install PHP 7.4 & Apache"
+echo ""
+info_msg "Menambahkan repository Sury untuk PHP 7.4..."
+
+curl -fsSL https://packages.sury.org/php/apt.gpg \
+| gpg --dearmor -o /etc/apt/trusted.gpg.d/sury.gpg 2>/dev/null
+
+echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" \
+> /etc/apt/sources.list.d/sury-php.list
+
+apt update > /dev/null 2>&1
+success_msg "Repository Sury ditambahkan"
+
+info_msg "Menginstall Apache & MariaDB..."
+apt install apache2 mariadb-server -y > /dev/null 2>&1
+success_msg "Apache & MariaDB terinstall"
+
+info_msg "Menginstall PHP 7.4 dan modul-modulnya..."
+apt install php7.4 php7.4-{cli,common,mysql,xml,gd,curl,zip,mbstring,intl,bz2,ldap,imap} \
+           libapache2-mod-php7.4 -y > /dev/null 2>&1
+
+# Disable PHP 8.x
+a2dismod php8.2 2>/dev/null
+a2dismod php8.1 2>/dev/null
+a2dismod php8.0 2>/dev/null
+
+a2enmod php7.4 > /dev/null 2>&1
+update-alternatives --set php /usr/bin/php7.4 > /dev/null 2>&1
+
+systemctl restart apache2
+success_msg "PHP 7.4 berhasil diinstall dan dikonfigurasi"
+
+# ===============================================
+# REPO OWNCLOUD
+# ===============================================
+step_header 6 8 "Install OwnCloud"
+echo ""
+info_msg "Menambahkan repository OwnCloud..."
+
+echo 'deb http://download.opensuse.org/repositories/isv:/ownCloud:/server:/10/Debian_12/ /' \
+> /etc/apt/sources.list.d/owncloud.list
+
+curl -fsSL https://download.opensuse.org/repositories/isv:ownCloud:server:10/Debian_12/Release.key \
+| gpg --dearmor > /etc/apt/trusted.gpg.d/owncloud.gpg 2>/dev/null
+
+apt update > /dev/null 2>&1
+success_msg "Repository OwnCloud ditambahkan"
+
+info_msg "Menginstall OwnCloud..."
+apt install owncloud-complete-files -y > /dev/null 2>&1
 mkdir -p /var/www/owncloud
+success_msg "OwnCloud berhasil terinstall"
 
-# Configure Apache for ownCloud with domain
-cat > /etc/apache2/sites-available/owncloud.conf << EOL
+# ===============================================
+# Apache VirtualHost + ServerAlias
+# ===============================================
+step_header 7 8 "Konfigurasi Apache VirtualHost"
+echo ""
+info_msg "Membuat VirtualHost untuk $DOMAIN..."
+
+cat > /etc/apache2/sites-available/$DOMAIN.conf << EOF
 <VirtualHost *:80>
-    ServerName ${FULL_DOMAIN}
-    ServerAlias www.${FULL_DOMAIN}
-    
-    DocumentRoot /var/www/owncloud
-    
+    ServerName $DOMAIN
+    ServerAlias www.$DOMAIN
+    ServerAlias $SERVER_IP
+
+    DocumentRoot /var/www/owncloud/
+
     <Directory /var/www/owncloud/>
-        Options +FollowSymlinks
         AllowOverride All
-        
+        Options +FollowSymlinks
+
         <IfModule mod_dav.c>
             Dav off
         </IfModule>
-        
+
         SetEnv HOME /var/www/owncloud
         SetEnv HTTP_HOME /var/www/owncloud
     </Directory>
-    
-    ErrorLog \${APACHE_LOG_DIR}/owncloud-error.log
-    CustomLog \${APACHE_LOG_DIR}/owncloud-access.log combined
+
+    ErrorLog \${APACHE_LOG_DIR}/owncloud_error.log
+    CustomLog \${APACHE_LOG_DIR}/owncloud_access.log combined
 </VirtualHost>
-EOL
+EOF
 
-a2ensite owncloud.conf
-a2dissite 000-default.conf
-a2enmod rewrite mime unique_id headers env dir
+a2dissite 000-default.conf > /dev/null 2>&1
+a2ensite $DOMAIN.conf > /dev/null 2>&1
+a2enmod rewrite mime unique_id > /dev/null 2>&1
+systemctl reload apache2
+success_msg "VirtualHost berhasil dikonfigurasi"
 
-apachectl -t
-
-systemctl restart apache2
-
+# ===============================================
+# Database OwnCloud
+# ===============================================
+step_header 8 8 "Setup Database"
 echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 2)[Step 9/10]$(tput sgr0) Configuring Database...                     $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-mysql << eof
-CREATE DATABASE IF NOT EXISTS ownclouddb;
-GRANT ALL PRIVILEGES ON ownclouddb.* TO 'owncloud'@'localhost' IDENTIFIED BY '1234';
+info_msg "Membuat database OwnCloud..."
+
+mysql --user=root -p$DBPASS << EOF 2>/dev/null
+CREATE DATABASE $DBNAME;
+GRANT ALL PRIVILEGES ON $DBNAME.* TO 'root'@'localhost' IDENTIFIED BY '$DBPASS';
 FLUSH PRIVILEGES;
-EXIT;
-eof
+EOF
 
-echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 2)[Step 10/10]$(tput sgr0) Installing ownCloud...                     $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-cd /var/www/owncloud
-sudo -u www-data php occ maintenance:install \
-   --database "mysql" \
-   --database-name "ownclouddb" \
-   --database-user "owncloud" \
-   --database-pass "1234" \
-   --admin-user "admin" \
-   --admin-pass "1234"
+success_msg "Database ${WHITE}$DBNAME${NC} berhasil dibuat"
 
-# Add trusted domain
-sudo -u www-data php occ config:system:set trusted_domains 1 --value=${FULL_DOMAIN}
-sudo -u www-data php occ config:system:set trusted_domains 2 --value=www.${FULL_DOMAIN}
-
-chown -R www-data:www-data /var/www/owncloud
-
-# Configure system DNS to use local BIND9
-echo "nameserver 127.0.0.1" > /etc/resolv.conf.new
-cat /etc/resolv.conf >> /etc/resolv.conf.new
-mv /etc/resolv.conf.new /etc/resolv.conf
-
+# ===============================================
+# END OUTPUT
+# ===============================================
 clear
 echo ""
-echo "$(tput setaf 2)╔════════════════════════════════════════════════════════════╗"
-echo "║                                                            ║"
-echo "║      ✓ ownCloud + DNS Server Installation Complete! ✓     ║"
-echo "║                                                            ║"
-echo "╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 3)DNS Server Information:$(tput sgr0)                                  $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  --------------------------------------------------------  $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  DNS Server   : $(tput setaf 2)${SERVER_IP}$(tput sgr0)                              $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  Domain       : $(tput setaf 2)${DOMAIN}$(tput sgr0)                                 $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  Full Domain  : $(tput setaf 2)${FULL_DOMAIN}$(tput sgr0)                            $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-echo ""
-echo "$(tput setaf 6)╔════════════════════════════════════════════════════════════╗$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  $(tput setaf 3)ownCloud Access Information:$(tput sgr0)                            $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  --------------------------------------------------------  $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  URL          : $(tput setaf 2)http://${FULL_DOMAIN}$(tput sgr0)                     $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  Alternative  : $(tput setaf 2)http://${SERVER_IP}$(tput sgr0)                       $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  Username     : $(tput setaf 2)admin$(tput sgr0)                                     $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)║$(tput sgr0)  Password     : $(tput setaf 2)1234$(tput sgr0)                                      $(tput setaf 6)║$(tput sgr0)"
-echo "$(tput setaf 6)╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-echo ""
-echo "$(tput setaf 3)╔════════════════════════════════════════════════════════════╗"
-echo "║  How to use DNS on client machines:                       ║"
-echo "║  --------------------------------------------------------  ║"
-echo "║  1. Edit /etc/resolv.conf (Linux)                         ║"
-echo "║     Add: nameserver ${SERVER_IP}                          "
-echo "║                                                            ║"
-echo "║  2. Windows: Network Adapter Settings                     ║"
-echo "║     Set DNS to: ${SERVER_IP}                              "
-echo "║                                                            ║"
-echo "║  3. Test DNS with: nslookup ${FULL_DOMAIN}                "
-echo "╚════════════════════════════════════════════════════════════╝$(tput sgr0)"
-echo ""
-echo "$(tput setaf 1)⚠ IMPORTANT SECURITY NOTES:"
-echo "  • Change default password after first login!"
-echo "  • Update DNS forwarders if needed in /etc/bind/named.conf.options"
-echo "  • Configure firewall to allow ports 53 (DNS) and 80 (HTTP)$(tput sgr0)"
-echo ""
-echo "$(tput setaf 5)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(tput sgr0)"
-echo "$(tput setaf 6)         Script created by Ardi Ajaa | Debian 12 Edition$(tput sgr0)"
-echo "$(tput setaf 5)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(tput sgr0)"
-echo ""
+echo -e "${GREEN}"
+cat << "EOF"
+    ╔═══════════════════════════════════════════════════════════════╗
+    ║                                                               ║
+    ║    ✓✓✓  INSTALLATION COMPLETED SUCCESSFULLY!  ✓✓✓           ║
+    ║                                                               ║
+    ╚═══════════════════════════════════════════════════════════════╝
+EOF
+echo -e "${NC}"
 
-# Test DNS
-echo "$(tput setaf 2)Testing DNS Configuration...$(tput sgr0)"
+echo -e "${CYAN}╔═══════════════════════════════════════════════════════════════╗${NC}"
+echo -e "${CYAN}║${NC}                  ${BOLD}${WHITE}INFORMASI AKSES${NC}                          ${CYAN}║${NC}"
+echo -e "${CYAN}╠═══════════════════════════════════════════════════════════════╣${NC}"
+echo -e "${CYAN}║${NC} ${YELLOW}Akses via IP:${NC}      ${GREEN}http://$SERVER_IP${NC}"
+echo -e "${CYAN}║${NC} ${YELLOW}Akses via Domain:${NC}  ${GREEN}http://$DOMAIN${NC}"
+echo -e "${CYAN}║${NC} ${YELLOW}Akses via WWW:${NC}     ${GREEN}http://www.$DOMAIN${NC}"
+echo -e "${CYAN}╚═══════════════════════════════════════════════════════════════╝${NC}"
+
 echo ""
-nslookup ${FULL_DOMAIN} 127.0.0.1
+echo -e "${MAGENTA}╔═══════════════════════════════════════════════════════════════╗${NC}"
+echo -e "${MAGENTA}║${NC}                ${BOLD}${WHITE}DATABASE INFORMATION${NC}                     ${MAGENTA}║${NC}"
+echo -e "${MAGENTA}╠═══════════════════════════════════════════════════════════════╣${NC}"
+echo -e "${MAGENTA}║${NC} ${CYAN}Database Name:${NC}     ${WHITE}$DBNAME${NC}"
+echo -e "${MAGENTA}║${NC} ${CYAN}Database User:${NC}     ${WHITE}root${NC}"
+echo -e "${MAGENTA}║${NC} ${CYAN}Database Password:${NC} ${WHITE}$DBPASS${NC}"
+echo -e "${MAGENTA}╚═══════════════════════════════════════════════════════════════╝${NC}"
+
+echo ""
+echo -e "${YELLOW}╔═══════════════════════════════════════════════════════════════╗${NC}"
+echo -e "${YELLOW}║${NC}  ${BOLD}${WHITE}LANGKAH SELANJUTNYA:${NC}                                      ${YELLOW}║${NC}"
+echo -e "${YELLOW}╠═══════════════════════════════════════════════════════════════╣${NC}"
+echo -e "${YELLOW}║${NC}  ${GREEN}1.${NC} Buka browser dan akses salah satu URL di atas          ${YELLOW}║${NC}"
+echo -e "${YELLOW}║${NC}  ${GREEN}2.${NC} Buat akun admin di halaman setup OwnCloud              ${YELLOW}║${NC}"
+echo -e "${YELLOW}║${NC}  ${GREEN}3.${NC} Masukkan informasi database di atas saat diminta      ${YELLOW}║${NC}"
+echo -e "${YELLOW}║${NC}  ${GREEN}4.${NC} Klik 'Finish setup' untuk menyelesaikan               ${YELLOW}║${NC}"
+echo -e "${YELLOW}╚═══════════════════════════════════════════════════════════════╝${NC}"
+
+echo ""
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${WHITE}            ${STAR} Script Created by: ${BOLD}${CYAN}Ardi Aja${NC} ${WHITE}${STAR}${NC}"
+echo -e "${WHITE}            GitHub: ${MAGENTA}https://github.com/ardiajaa/${NC}"
+echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+echo -e "${GREEN}${CHECK} Terima kasih telah menggunakan script ini! ${CHECK}${NC}"
 echo ""
